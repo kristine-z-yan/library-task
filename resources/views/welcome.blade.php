@@ -61,10 +61,10 @@
                             </video>
                         </div>
                         <div class="my-4 list-group text-left">
-                            <div class="list-group-item">Titile: Cras justo odio</div>
-                            <div class="list-group-item">Description: Dapibus ac facilisis in</div>
-                            <div class="list-group-item">Authors: Morbi leo risus</div>
-                            <div class="list-group-item">Created at: 08 April 2022</div>
+                            <div class="list-group-item">Titile: <span class="title"></span></div>
+                            <div class="list-group-item">Description: <span class="desc"></span></div>
+                            <div class="list-group-item">Authors: <span class="authors"></span></div>
+                            <div class="list-group-item">Created at: <span class="date"></span></div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -98,10 +98,31 @@
 										<td>"+value.description+"</td>\
 										<td>"+authors+"</td>\
 										<td>"+date+"</td>\
-										<td><button type='button' class='btn btn-primary' data-toggle='modal' data-id="+value.id+" data-target='#viewBookModal'>View </button></td>\
+										<td><button type='button' class='btn btn-primary details-modal-button' data-toggle='modal' data-id="+value.id+" data-target='#viewBookModal'>View </button></td>\
 										</tr>");
                 })
             }
+        })
+
+        $(document).on('click','.details-modal-button', function(el) {
+            let id = $(this).attr('data-id');
+            $.ajax({
+                url: 'http://127.0.0.1:8000/api/books/' + id,
+                success: function (res) {
+                    let authors='';
+                    $.each(res.authors, function (key, value) {
+                        authors += value.firstname + ' ' + value.lastname;
+                        if (key < res.authors.length-1) authors += ', ';
+                    })
+                    let date = new Date(res.created_at);
+                    date = date.toISOString().split("T")[0];
+
+                    $('.title').text(res.title);
+                    $('.desc').text(res.description);
+                    $('.authors').text(authors);
+                    $('.date').text(date);
+                }
+            })
         })
     </script>
 </html>
